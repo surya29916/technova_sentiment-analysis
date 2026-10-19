@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SentimentAI | Review Intelligence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #080d1b;
+            --panel: #111a2d;
+            --panel-light: #17233a;
+            --border: rgba(148, 163, 184, 0.16);
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --blue: #60a5fa;
+            --purple: #a78bfa;
+            --green: #34d399;
+            --red: #fb7185;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(ellipse at 15% 0%, rgba(59, 130, 246, 0.14), transparent 40%),
+                radial-gradient(ellipse at 90% 15%, rgba(139, 92, 246, 0.12), transparent 35%),
+                var(--bg);
+            color: var(--text);
+        }
+
+        .navbar {
+            width: min(1120px, 92%);
+            margin: auto;
+            height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.25);
+            font-size: 21px;
+        }
+
+        .brand span {
+            color: var(--blue);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a7f3d0;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 9px 13px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 30px;
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+        }
+
+        .container {
+            width: min(1000px, 92%);
+            margin: 0 auto;
+            padding: 62px 0 35px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 42px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            border-radius: 30px;
+            border: 1px solid rgba(96, 165, 250, 0.25);
+            background: rgba(59, 130, 246, 0.08);
+            color: #93c5fd;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 23px;
+        }
+
+        h1 {
+            font-size: clamp(35px, 6vw, 57px);
+            line-height: 1.12;
+            letter-spacing: -2.3px;
+            margin-bottom: 18px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            max-width: 600px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(235px, 0.8fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            background: rgba(17, 26, 45, 0.92);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.18);
+        }
+
+        .card-header {
+            padding: 23px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: rgba(96, 165, 250, 0.12);
+            font-size: 20px;
+        }
+
+        .card-header h2 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .card-header p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .optional {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 190px;
+            resize: vertical;
+            padding: 17px;
+            border-radius: 13px;
+            border: 1px solid #2b3b55;
+            background: #0b1323;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            line-height: 1.8;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        textarea::placeholder {
+            color: #64748b;
+        }
+
+        textarea:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.10);
+        }
+
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 21px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 11px;
+        }
+
+        .btn {
+            min-height: 47px;
+            padding: 0 20px;
+            border-radius: 11px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            flex: 1;
+            color: white;
+            background: linear-gradient(100deg, #3b82f6, #7659ed);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+        }
+
+        .btn-secondary {
+            color: #cbd5e1;
+            border: 1px solid var(--border);
+            background: #172136;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+            transform: none;
+        }
+
+        .side-card {
+            padding: 22px;
+            margin-bottom: 17px;
+        }
+
+        .side-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .side-description {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+            margin-bottom: 19px;
+        }
+
+        .sample {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            width: 100%;
+            text-align: left;
+            padding: 13px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            background: #0d1628;
+            color: var(--text);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: border 0.2s, background 0.2s;
+        }
+
+        .sample:hover {
+            border-color: #4b6d9c;
+            background: #14213a;
+        }
+
+        .sample:last-child {
+            margin-bottom: 0;
+        }
+
+        .sample-icon {
+            font-size: 18px;
+        }
+
+        .sample strong {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .sample small {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        .result-card {
+            margin-top: 22px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: #0d1628;
+            animation: appear 0.4s ease;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 19px;
+        }
+
+        .result-heading h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .result-heading p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .result-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            font-size: 21px;
+        }
+
+        .positive {
+            color: var(--green);
+        }
+
+        .positive .result-icon {
+            background: rgba(52, 211, 153, 0.12);
+        }
+
+        .negative {
+            color: var(--red);
+        }
+
+        .negative .result-icon {
+            background: rgba(251, 113, 133, 0.12);
+        }
+
+        .neutral {
+            color: var(--blue);
+        }
+
+        .neutral .result-icon {
+            background: rgba(96, 165, 250, 0.12);
+        }
+
+        .result-label {
+            font-size: 27px;
+            font-weight: 800;
+            margin-bottom: 19px;
+        }
+
+        .confidence-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
+
+        .confidence-row strong {
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .progress {
+            height: 7px;
+            border-radius: 10px;
+            background: #25324a;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #3b82f6, #a78bfa);
+            transition: width 0.7s ease;
+        }
+
+        .review-preview {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 11px;
+            background: rgba(148, 163, 184, 0.06);
+            border: 1px solid var(--border);
+        }
+
+        .review-preview strong {
+            font-size: 11px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .review-preview p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .info-card {
+            padding: 21px;
+            border-radius: 18px;
+            border: 1px solid rgba(167, 139, 250, 0.17);
+            background: linear-gradient(
+                140deg,
+                rgba(139, 92, 246, 0.10),
+                rgba(59, 130, 246, 0.06)
+            );
+        }
+
+        .info-card h3 {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            font-size: 11px;
+            line-height: 1.9;
+            color: var(--muted);
+        }
+
+        .footer {
+            margin-top: 58px;
+            padding-top: 22px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            color: #64748b;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .footer strong {
+            color: #a5b4fc;
+        }
+
+        .notice {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #fcd34d;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.16);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 760px) {
+            .container {
+                padding-top: 42px;
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                margin-bottom: 30px;
+            }
+
+            .card-body {
+                padding: 19px;
+            }
+
+            .card-header {
+                padding: 19px;
+            }
+
+            .footer {
+                flex-direction: column;
+            }
+
+            .status {
+                font-size: 10px;
+                padding: 8px 10px;
+            }
+
+            h1 {
+                letter-spacing: -1.5px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .brand {
+                font-size: 16px;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn-secondary {
+                width: 100%;
+            }
+
+            .input-footer {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="brand">
+            <div class="brand-icon">✦</div>
+            <div>Sentiment<span>AI</span></div>
+        </div>
+
+        <div class="status">
+            <span class="status-dot"></span>
+            AI APPLICATION
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="hero">
+            <div class="eyebrow">
+                ✨ MACHINE LEARNING · NLP
+            </div>
+
+            <h1>
+                Understand the emotion<br>
+                <span class="gradient-text">behind every review.</span>
+            </h1>
+
+            <p>
+                Transform customer feedback into meaningful insights.
+                Enter a review and let our machine learning model
+                identify whether its sentiment is positive or negative.
+            </p>
+        </section>
+
+        <section class="workspace">
+
+            <div>
+                <div class="card">
+
+                    <div class="card-header">
+                        <div class="card-icon">⌘</div>
+
+                        <div>
+                            <h2>Review Analyzer</h2>
+                            <p>Enter your text to analyze its sentiment</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <form method="POST" id="sentimentForm">
+
+                            <div class="label-row">
+                                <label for="review">Your review</label>
+                                <span class="optional">TEXT INPUT</span>
+                            </div>
+
+                            <textarea
+                                id="review"
+                                name="review"
+                                maxlength="5000"
+                                placeholder="Example: This movie was absolutely amazing! The story was engaging and the performances were outstanding..."
+                                required>{{ review or '' }}</textarea>
+
+                            <div class="input-footer">
+                                <span>Write naturally for better analysis.</span>
+                                <span id="charCount">0 / 5000</span>
+                            </div>
+
+                            <div class="buttons">
+                                <button
+                                    class="btn btn-primary"
+                                    type="submit"
+                                    id="analyzeBtn">
+                                    ✨ Analyze Sentiment →
+                                </button>
+
+                                <button
+                                    class="btn btn-secondary"
+                                    type="button"
+                                    id="clearBtn">
+                                    Clear
+                                </button>
+                            </div>
+
+                        </form>
+
+                        {% if sentiment is not none and sentiment %}
+
+                        {% set sentiment_text = sentiment|string|lower %}
+
+                        {% if 'positive' in sentiment_text %}
+                            {% set result_class = 'positive' %}
+                            {% set result_icon = '😊' %}
+                            {% set result_title = 'Positive Sentiment' %}
+                        {% elif 'negative' in sentiment_text %}
+                            {% set result_class = 'negative' %}
+                            {% set result_icon = '😞' %}
+                            {% set result_title = 'Negative Sentiment' %}
+                        {% else %}
+                            {% set result_class = 'neutral' %}
+                            {% set result_icon = '🔎' %}
+                            {% set result_title = sentiment %}
+                        {% endif %}
+
+                        <div class="result-card">
+
+                            <div class="result-heading {{ result_class }}">
+                                <div class="result-icon">{{ result_icon }}</div>
+
+                                <div>
+                                    <h3>Analysis Complete</h3>
+                                    <p>Model prediction for your review</p>
+                                </div>
+                            </div>
+
+                            <div class="result-label {{ result_class }}">
+                                {{ result_title }}
+                            </div>
+
+                            <div class="confidence-row">
+                                <span>Prediction confidence</span>
+                                <strong>
+                                    {{ "%.2f"|format(confidence|float) }}%
+                                </strong>
+                            </div>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: {{ [0, [confidence|float, 100]|min]|max }}%;">
+                                </div>
+                            </div>
+
+                            <div class="review-preview">
+                                <strong>ANALYZED TEXT</strong>
+                                <p>{{ review }}</p>
+                            </div>
+
+                            <div class="notice">
+                                Confidence is the model's estimated certainty,
+                                not a guarantee that the prediction is correct.
+                            </div>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+            <aside>
+
+                <div class="card side-card">
+
+                    <h3 class="side-title">⚡ Try sample reviews</h3>
+
+                    <p class="side-description">
+                        Select an example to fill the input automatically.
+                    </p>
+
+                    <button class="sample" type="button"
+                            data-review="This movie was fantastic! The acting was excellent and the story kept me interested throughout.">
+                        <span class="sample-icon">😊</span>
+                        <span>
+                            <strong>Positive review</strong>
+                            <small>A fantastic movie with excellent acting.</small>
+                        </span>
+                    </button>
+
+                    <button class="sample" type="button"
+                            data-review="This was a terrible movie. The story was boring, the acting was poor, and I completely regret watching it.">
+                        <span class="sample-icon">😞</span>
+                        <span>
+                            <strong>Negative review</strong>
+                            <small>A boring movie with poor acting.</small>
+                        </span>
+                    </button>
+
+                    <button class="sample" type="button"
+                            data-review="The movie had an interesting beginning, but the second half was slow and the ending was predictable.">
+                        <span class="sample-icon">🎬</span>
+                        <span>
+                            <strong>Mixed review</strong>
+                            <small>Some good parts, some disappointing parts.</small>
+                        </span>
+                    </button>
+
+                </div>
+
+                <div class="card side-card">
+
+                    <h3 class="side-title">🧠 How it works</h3>
+
+                    <p class="side-description">
+                        Your text is processed through a machine learning
+                        pipeline trained on movie reviews.
+                    </p>
+
+                    <div class="sample">
+                        <span class="sample-icon">01</span>
+                        <span>
+                            <strong>Text Processing</strong>
+                            <small>Convert review text into numerical features.</small>
+                        </span>
+                    </div>
+
+                    <div class="sample">
+                        <span class="sample-icon">02</span>
+                        <span>
+                            <strong>TF-IDF Features</strong>
+                            <small>Represent words and phrases mathematically.</small>
+                        </span>
+                    </div>
+
+                    <div class="sample">
+                        <span class="sample-icon">03</span>
+                        <span>
+                            <strong>Classification</strong>
+                            <small>Logistic Regression predicts sentiment.</small>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="info-card">
+                    <h3>💡 Research Note</h3>
+                    <p>
+                        This application uses the NLTK movie reviews dataset.
+                        Its predictions are intended for experimentation and
+                        educational demonstration. Results may vary for text
+                        outside the training domain.
+                    </p>
+                </div>
+
+            </aside>
+
+        </section>
+
+        <footer class="footer">
+            <div>
+                <strong>SentimentAI</strong><br>
+                AI-powered text sentiment analysis
+            </div>
+
+            <div>
+                Built with Python · Flask · NLTK · Scikit-learn<br>
+                TechNova AI Internship Project
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        const reviewInput = document.getElementById("review");
+        const charCount = document.getElementById("charCount");
+        const clearBtn = document.getElementById("clearBtn");
+        const form = document.getElementById("sentimentForm");
+        const analyzeBtn = document.getElementById("analyzeBtn");
+
+        function updateCharacterCount() {
+            charCount.textContent = `${reviewInput.value.length} / 5000`;
+        }
+
+        reviewInput.addEventListener("input", updateCharacterCount);
+
+        updateCharacterCount();
+
+        document.querySelectorAll(".sample").forEach(button => {
+            if (button.dataset.review) {
+                button.addEventListener("click", () => {
+                    reviewInput.value = button.dataset.review;
+                    updateCharacterCount();
+                    reviewInput.focus();
+                    reviewInput.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                });
+            }
+        });
+
+        clearBtn.addEventListener("click", () => {
+            reviewInput.value = "";
+            updateCharacterCount();
+            reviewInput.focus();
+
+            const oldResult = document.querySelector(".result-card");
+
+            if (oldResult) {
+                oldResult.remove();
+            }
+        });
+
+        form.addEventListener("submit", event => {
+            if (!reviewInput.value.trim()) {
+                event.preventDefault();
+                reviewInput.focus();
+                return;
+            }
+
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = "Analyzing review...";
+        });
+    </script>
+
+</body>
+</html>
